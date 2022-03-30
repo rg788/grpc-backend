@@ -1,0 +1,61 @@
+syntax= "proto3";
+
+package main;
+
+option go_package ="./;proto";
+
+message Port{
+    string id =1;
+    string name =2;
+    string code =3;
+    string city =4;
+    string state=5;
+    string country =6;
+}
+
+message CreatePortRequest{
+    Port port =1;
+}
+
+message CreatePortResponse{
+    Port port=1;
+}
+
+message UpdatePortRequest{
+    Port port =1;
+}
+
+message UpdatePortResponse{
+    Port port =1;
+}
+
+message RetrievePortRequest{
+    Port port =1;
+}
+message RetrievePortResponse{
+    Port port =1;
+}
+
+message DeletePortResquest{
+    string port_id =1;
+}
+
+message DeletePortResponse{
+    string port_id =1;
+}
+
+message ListPortRequest {
+
+}
+
+message ListPortResponse {
+    Port port = 1;
+}
+
+service PortService{
+    rpc CreatePort(CreatePortRequest) returns (CreatePortResponse);
+    rpc RetreivePort (RetrievePortRequest) returns (RetrievePortResponse);
+    rpc UpdatePort (UpdatePortRequest) returns (UpdatePortResponse);
+    rpc DeletePort (DeletePortResquest) returns (DeletePortResponse);
+    rpc ListPort (ListPortRequest) returns (ListPortResponse);
+}
