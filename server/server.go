@@ -10,9 +10,11 @@ import (
 	"os/signal"
 
 	_ "github.com/lib/pq"
+
+
 )
 
-func main() {
+func dbConnection(){
 	// if we crash the go code, we get the file name and line number
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -58,3 +60,12 @@ func main() {
 	s.Stop()
 	fmt.Println("End of Program")
 }
+
+
+func main() {
+	dbConnection();
+
+}
+
+
+
