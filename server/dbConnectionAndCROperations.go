@@ -44,7 +44,7 @@ func main() {
 	}
 	//fmt.Println(success)
 
-	_, newerr := conn.Exec(context.Background(), "insert into seaports(id,name,code,city,state,country) values ($1,$2,$3,$4,$5,$6)", uuid.NewV4().String(), "nikil", "vdy789", "erode", "tamilnadu", "india")
+	_, newerr := conn.Exec(context.Background(), "insert into seaports(id,name,code,city,state,country) values ($1,$2,$3,$4,$5,$6)", uuid.NewV4().String(), "nikhil", "vdy789", "erode", "tamilnadu", "india")
 	if newerr != nil {
 		fmt.Fprintf(os.Stderr, "insertion failed: %v\n", newerr)
 		os.Exit(1)
