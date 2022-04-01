@@ -26,11 +26,11 @@ func main() {
 
 	cc := pb.NewPortServiceClient(conn)
 
-	xyz(cc)
+	endPoints(cc)
 
 }
 
-func xyz(cc pb.PortServiceClient) {
+func endPoints(cc pb.PortServiceClient) {
 
 	g := gin.Default()
 	g.POST("/v1/ports", func(ctx *gin.Context) {
@@ -65,6 +65,4 @@ func xyz(cc pb.PortServiceClient) {
 	if err := g.Run(":5050"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
-
-	g.Run(":5050")
 }
