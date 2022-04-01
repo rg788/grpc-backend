@@ -18,22 +18,22 @@ message CreatePortRequest{
 }
 
 message CreatePortResponse{
-    Port port=1;
+    string result =1;
 }
 
 message UpdatePortRequest{
-    Port port =1;
+    string port_id =1;
 }
 
 message UpdatePortResponse{
-    Port port =1;
+    string result =1;
 }
 
 message RetrievePortRequest{
-    Port port =1;
+    string port_id =1;
 }
 message RetrievePortResponse{
-    Port port =1;
+    string result =1;
 }
 
 message DeletePortResquest{
@@ -41,7 +41,7 @@ message DeletePortResquest{
 }
 
 message DeletePortResponse{
-    string port_id =1;
+    string result =1;
 }
 
 message ListPortRequest {
