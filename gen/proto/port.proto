@@ -33,7 +33,12 @@ message RetrievePortRequest{
     string port_id =1;
 }
 message RetrievePortResponse{
-    Port port =1;
+    string id =1;
+    string name =2;
+    string code =3;
+    string city =4;
+    string state=5;
+    string country =6;
 }
 
 message DeletePortResquest{

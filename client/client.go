@@ -62,8 +62,7 @@ func endPoints(cc pb.PortServiceClient) {
 
 	})
 
-
-	g.PUT("/v1/ports/:id", func (ctx *gin.Context){
+	g.PUT("/v1/ports/:id", func(ctx *gin.Context) {
 
 		id := ctx.Param("id")
 		var input PORTINPUT
@@ -75,16 +74,45 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 		req := &pb.UpdatePortRequest{PortId: id}
 
-		if response, err := cc.UpdatePort(ctx,req);err==nil{
-			ctx.JSON(http.StatusOK,gin.H{
-				"Result" : response,
+		if response, err := cc.UpdatePort(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"Result": response,
 			})
-		}else{
-			ctx.JSON(http.StatusInternalServerError,gin.H{
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
 		}
-		
+
+	})
+
+	g.GET("/v1/ports/:id", func(ctx *gin.Context) {
+
+		id := ctx.Param("id")
+		var input PORTINPUT
+		if err := ctx.BindJSON(&input); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		req := &pb.RetrievePortRequest{PortId: id}
+
+		if response, err := cc.RetreivePort(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"id":      response.Id,
+				"name":    response.Name,
+				"code":    response.Code,
+				"city":    response.City,
+				"state":   response.State,
+				"country": response.Country,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+		}
+
 	})
 
 	if err := g.Run(":5050"); err != nil {

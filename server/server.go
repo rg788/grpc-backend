@@ -85,11 +85,11 @@ func (*server) CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.Cr
 func (*server) RetreivePort(ctx context.Context, in *pb.RetrievePortRequest) (*pb.RetrievePortResponse, error) {
 
 	id := in.GetPortId()
-	Id,name,code,city,state,country:=Getportdetails(id)
+	Id, name, code, city, state, country := Getportdetails(id)
 
-	return &pb.RetrievePortResponse{
-		Port: &pb.Port{Id: Id, Name: name, Code: code,City: city, State: state, Country: country,}},nil
+	return &pb.RetrievePortResponse{Id: Id, Name: name, Code: code, City: city, State: state, Country: country}, nil
 }
+
 //Id:Id,Name: name,Code: code,City: city,State: state,Country: country
 func main() {
 
