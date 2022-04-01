@@ -1,20 +1,21 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
+	//"database/sql"
+	//"fmt"
 	"google.golang.org/grpc"
 	"log"
 	"net"
-	"os"
-	"os/signal"
-
+	//"os"
+	//"os/signal"
+	"context"
 	_ "github.com/lib/pq"
+	pb "grpc-backend/gen/proto"
 
 
 )
 
-func dbConnection(){
+/* func dbConnection(){
 	// if we crash the go code, we get the file name and line number
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -59,13 +60,36 @@ func dbConnection(){
 	fmt.Println("Stopping the server")
 	s.Stop()
 	fmt.Println("End of Program")
+} */
+type server struct{
+	pb.UnimplementedPortServiceServer
 }
 
+func (*server)CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.CreatePortResponse, error){
+
+	id := in.Port.GetId()
+	name := in.Port.GetName()
+	code := in.Port.GetCode()
+	city := in.Port.GetCity()
+	state := in.Port.GetState()
+	country := in.Port.GetCountry()
+
+	return &pb.CreatePortResponse{Port: &pb.Port{Id:id,Name: name,Code: code,City: city,State: state,Country: country}},nil
+}
 
 func main() {
-	dbConnection();
+
+	//dbConnection()
+  
+	lis, err := net.Listen("tcp", "0.0.0.0:5051")
+    if err != nil {
+        log.Fatalf("Error while listening , server %v", err)
+    }
+    sGRCP := grpc.NewServer()
+    pb.RegisterPortServiceServer(sGRCP, &server{})
+    if err := sGRCP.Serve(lis); err != nil {
+        log.Fatalf("Error while runnig perService %v", err)
+	}
+
 
 }
-
-
-
