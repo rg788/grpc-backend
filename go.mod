@@ -3,7 +3,6 @@ module grpc-backend
 go 1.18
 
 require (
-	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgx/v4 v4.15.0
 	github.com/lib/pq v1.10.4
 	github.com/satori/go.uuid v1.2.0

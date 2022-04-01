@@ -3,16 +3,17 @@ package main
 import (
 	//"database/sql"
 	//"fmt"
-	"google.golang.org/grpc"
 	"log"
 	"net"
+
+	"google.golang.org/grpc"
+	//srv "grpc-backend/server"
 	//"os"
 	//"os/signal"
 	"context"
-	_ "github.com/lib/pq"
 	pb "grpc-backend/gen/proto"
 
-
+	_ "github.com/lib/pq"
 )
 
 /* func dbConnection(){
@@ -61,11 +62,13 @@ import (
 	s.Stop()
 	fmt.Println("End of Program")
 } */
-type server struct{
+type server struct {
 	pb.UnimplementedPortServiceServer
 }
 
-func (*server)CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.CreatePortResponse, error){
+//Creating new port
+
+func (*server) CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.CreatePortResponse, error) {
 
 	id := in.Port.GetId()
 	name := in.Port.GetName()
@@ -73,24 +76,35 @@ func (*server)CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.Cre
 	city := in.Port.GetCity()
 	state := in.Port.GetState()
 	country := in.Port.GetCountry()
-	
 
-	return &pb.CreatePortResponse{Port: &pb.Port{Id:id,Name: name,Code: code,City: city,State: state,Country: country}},nil
+	Createnewport(id, name, code, city, state, country)
+	return &pb.CreatePortResponse{Result: "Successfully Created A port"}, nil
 }
 
+//retrieve new port
+func (*server) RetreivePort(ctx context.Context, in *pb.RetrievePortRequest) (*pb.RetrievePortResponse, error) {
+
+	id := in.GetPortId()
+	Id,name,code,city,state,country:=Getportdetails(id)
+
+	return &pb.RetrievePortResponse{
+		Port: &pb.Port{Id: Id, Name: name, Code: code,City: city, State: state, Country: country,}},nil
+}
+//Id:Id,Name: name,Code: code,City: city,State: state,Country: country
 func main() {
 
 	//dbConnection()
-  
+
 	lis, err := net.Listen("tcp", "0.0.0.0:5051")
-    if err != nil {
-        log.Fatalf("Error while listening , server %v", err)
-    }
-    sGRCP := grpc.NewServer()
-    pb.RegisterPortServiceServer(sGRCP, &server{})
-    if err := sGRCP.Serve(lis); err != nil {
-        log.Fatalf("Error while runnig perService %v", err)
+	if err != nil {
+		log.Fatalf("Error while listening , server %v", err)
+	}
+	sGRCP := grpc.NewServer()
+	pb.RegisterPortServiceServer(sGRCP, &server{})
+	if err := sGRCP.Serve(lis); err != nil {
+		log.Fatalf("Error while runnig perService %v", err)
 	}
 
-
 }
+
+//func createnewport(id, name, code, city, state, country string) {}

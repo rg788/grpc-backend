@@ -52,7 +52,7 @@ func xyz(cc pb.PortServiceClient) {
 
 		if response, err := cc.CreatePort(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
-				"Result": response,
+				"Create": response,
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{

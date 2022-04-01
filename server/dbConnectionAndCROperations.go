@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"os"
-
 	"github.com/jackc/pgx/v4"
 	uuid "github.com/satori/go.uuid"
 )
 
-func main() {
+func dbConnection() {
 	conn, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/ports"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
@@ -90,4 +89,12 @@ func main() {
 	      return
 	 }*/
 
+}
+func Createnewport(id, name, code, city, state, country string) {
+	fmt.Println("Create")
+}
+
+func Getportdetails(id string)(Id, name, code, city, state, country string){
+	fmt.Println("Fetch")
+	return "1","2","3","4","5","6"
 }
