@@ -64,13 +64,27 @@ func endPoints(cc pb.PortServiceClient) {
 
 
 	g.PUT("/v1/ports/:id", func (ctx *gin.Context){
+
+		id := ctx.Param("id")
 		var input PORTINPUT
-		if err := ctx.BindJSON(&input); err!=nil{
-			ctx.JSON(http.StatusBadRequest,gin.H{
-				"error" : ""
-				"message": "country/state/city missing",
+		if err := ctx.BindJSON(&input); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		req := &pb.UpdatePortRequest{PortId: id}
+
+		if response, err := cc.UpdatePort(ctx,req);err==nil{
+			ctx.JSON(http.StatusOK,gin.H{
+				"Result" : response,
+			})
+		}else{
+			ctx.JSON(http.StatusInternalServerError,gin.H{
+				"error": err.Error(),
 			})
 		}
+		
 	})
 
 	if err := g.Run(":5050"); err != nil {
