@@ -62,6 +62,17 @@ func endPoints(cc pb.PortServiceClient) {
 
 	})
 
+
+	g.PUT("/v1/ports/:id", func (ctx *gin.Context){
+		var input PORTINPUT
+		if err := ctx.BindJSON(&input); err!=nil{
+			ctx.JSON(http.StatusBadRequest,gin.H{
+				"error" : ""
+				"message": "country/state/city missing",
+			})
+		}
+	})
+
 	if err := g.Run(":5050"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
