@@ -3,11 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"google.golang.org/grpc"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+
+	"google.golang.org/grpc"
 
 	_ "github.com/lib/pq"
 )
