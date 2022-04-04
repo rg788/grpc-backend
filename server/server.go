@@ -99,7 +99,9 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 	if checkPortId(id) {
 		Id, Name, Code, City, State, Country := Getportdetails(id)
 		UpdatePortDetails(Id, Name, Code, City, State, Country)
-		return &pb.UpdatePortResponse{Result: "Successfully updated"}, nil
+		var res string
+		res = "Port " + id + " Successfully updated"
+		return &pb.UpdatePortResponse{Result: res}, nil
 	} else {
 		//id := in.Port.GetId()
 		name := in.Port.GetName()
