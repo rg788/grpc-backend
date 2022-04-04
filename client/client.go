@@ -119,6 +119,31 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
+	g.DELETE("/v1/ports/:id", func(ctx *gin.Context) {
+
+		id := ctx.Param("id")
+		var input PORTINPUT
+		if err := ctx.BindJSON(&input); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		req := &pb.DeletePortResquest{
+			PortId: id,
+		}
+
+		if response, err := cc.DeletePort(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"Result": response,
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+		}
+
+	})
 
 	if err := g.Run(":5050"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
