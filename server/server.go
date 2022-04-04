@@ -3,6 +3,7 @@ package main
 import (
 	//"database/sql"
 	//"fmt"
+
 	"log"
 	"net"
 
@@ -78,7 +79,9 @@ func (*server) CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.Cr
 	country := in.Port.GetCountry()
 
 	Createnewport(id, name, code, city, state, country)
-	return &pb.CreatePortResponse{Result: "Successfully Created A port"}, nil
+	var res string
+	res = "Port " + id + " Successfully Created a port"
+	return &pb.CreatePortResponse{Result: res}, nil
 }
 
 //retrieve new port
@@ -96,7 +99,9 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 	if checkPortId(id) {
 		Id, Name, Code, City, State, Country := Getportdetails(id)
 		UpdatePortDetails(Id, Name, Code, City, State, Country)
-		return &pb.UpdatePortResponse{Result: "Successfully updated"}, nil
+		var res string
+		res = "Port " + id + " Successfully updated"
+		return &pb.UpdatePortResponse{Result: res}, nil
 	} else {
 		//id := in.Port.GetId()
 		name := in.Port.GetName()
@@ -105,7 +110,9 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 		state := in.Port.GetState()
 		country := in.Port.GetCountry()
 		Createnewport(id, name, code, city, state, country)
-		return &pb.UpdatePortResponse{Result: "Successfully new port created"}, nil
+		var res string
+		res = "Port " + id + " Successfully new port created "
+		return &pb.UpdatePortResponse{Result: res}, nil
 	}
 }
 
@@ -113,14 +120,16 @@ func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.D
 	id := in.GetPortId()
 	DeletePortDetails(id)
 
-	return &pb.DeletePortResponse{Result: "Successfully Deleted"}, nil
+	var res string
+	res = "Port " + id + " Successfully Deleted"
+	return &pb.DeletePortResponse{Result: res}, nil
 }
 
 //Id:Id,Name: name,Code: code,City: city,State: state,Country: country
 func main() {
 
 	//dbConnection()
-
+	log.Println("Server Started")
 	lis, err := net.Listen("tcp", "0.0.0.0:5051")
 	if err != nil {
 		log.Fatalf("Error while listening , server %v", err)
