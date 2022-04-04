@@ -1,68 +1,16 @@
 package main
 
 import (
-	//"database/sql"
-	//"fmt"
-
-	"log"
-	"net"
-
-	"google.golang.org/grpc"
-	//srv "grpc-backend/server"
-	//"os"
-	//"os/signal"
 	"context"
 	pb "grpc-backend/gen/proto"
+	"log"
+	"net"
+	"strconv"
 
 	_ "github.com/lib/pq"
+	"google.golang.org/grpc"
 )
 
-/* func dbConnection(){
-	// if we crash the go code, we get the file name and line number
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
-	fmt.Println("Connecting to DB")
-
-	connStr := "user=postgres dbname=test1 password=password host=localhost sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("\nSuccessfully connected to database!\n")
-
-	lis, err := net.Listen("tcp", "0.0.0.0:50051")
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
-
-	var opts []grpc.ServerOption
-	s := grpc.NewServer(opts...)
-
-	go func() {
-		fmt.Println("Starting Server...")
-		if err := s.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
-
-	// Wait for Control C to exit
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, os.Interrupt)
-
-	// Block until a signal is received
-	<-ch
-
-	// Finally, we stop the server
-	fmt.Println("Stopping the server")
-	s.Stop()
-	fmt.Println("End of Program")
-} */
 type server struct {
 	pb.UnimplementedPortServiceServer
 }
@@ -78,9 +26,14 @@ func (*server) CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.Cr
 	state := in.Port.GetState()
 	country := in.Port.GetCountry()
 
-	Createnewport(id, name, code, city, state, country)
+	err := Createnewport(id, name, code, city, state, country)
 	var res string
-	res = "Port " /* + id +  */+ " Successfully Created a port"
+	if err != nil {
+		res = "Port ID already exist"
+		return &pb.CreatePortResponse{Result: res}, nil
+	}
+
+	res = "Port "  + strconv.Itoa(int(id))  + " Successfully Created"
 	return &pb.CreatePortResponse{Result: res}, nil
 }
 
@@ -97,7 +50,6 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 
 	id := in.Port.GetId()
 	if checkPortId(id) {
-		//Id, Name, Code, City, State, Country := Getportdetails(id)
 		Id := in.Port.GetId()
 		Name := in.Port.GetName()
 		Code := in.Port.GetCode()
@@ -107,7 +59,7 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 		UpdatePortDetails(Id, Name, Code, City, State, Country)
 
 		var res string
-		res = "Port " + /* id +  */" Successfully updated"
+		res = "Port " + strconv.Itoa(int(id))+ " Successfully updated"
 		return &pb.UpdatePortResponse{Result: res}, nil
 	} else {
 		//id := in.Port.GetId()
@@ -118,7 +70,7 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 		country := in.Port.GetCountry()
 		Createnewport(id, name, code, city, state, country)
 		var res string
-		res = "Port " + /* id + */ " Successfully new port created "
+		res = "Port " + strconv.Itoa(int(id))+ " Successfully created "
 		return &pb.UpdatePortResponse{Result: res}, nil
 	}
 
@@ -129,7 +81,7 @@ func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.D
 	DeletePortDetails(id)
 
 	var res string
-	res = "Port " + /* id + */ " Successfully Deleted"
+	res = "Port " +strconv.Itoa(int(id))+" Successfully Deleted"
 	return &pb.DeletePortResponse{Result: res}, nil
 }
 
@@ -148,6 +100,5 @@ func main() {
 		log.Fatalf("Error while runnig perService %v", err)
 	}
 
-}
 
-//func createnewport(id, name, code, city, state, country string) {}
+}

@@ -19,7 +19,6 @@ type PORTINPUT struct {
 	COUNTRY string `json:"country" binding:"required"`
 }
 
-
 func main() {
 	conn, err := grpc.Dial("localhost:5051", grpc.WithInsecure())
 	if err != nil {
@@ -35,6 +34,9 @@ func main() {
 func endPoints(cc pb.PortServiceClient) {
 
 	g := gin.Default()
+	
+//Creating
+
 	g.POST("/v1/ports", func(ctx *gin.Context) {
 
 		var input PORTINPUT
@@ -63,10 +65,10 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
-
+//Updating
 	g.PUT("/v1/ports/:id", func(ctx *gin.Context) {
 
-		id,_ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -92,10 +94,10 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
-
+//Retreive
 	g.GET("/v1/ports/:id", func(ctx *gin.Context) {
 
-		id,_ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -121,9 +123,11 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
+
+// Deletion
 	g.DELETE("/v1/ports/:id", func(ctx *gin.Context) {
 
-		id,_ := strconv.ParseInt(ctx.Param("id"), 10, 64)
+		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -146,11 +150,12 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
+//Pagination
 
 	g.GET("/v1/ports", func(ctx *gin.Context) {
 		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "0"))
 		count, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
-		
+
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -159,15 +164,15 @@ func endPoints(cc pb.PortServiceClient) {
 			return
 		}
 		req := &pb.ListPortRequest{
-			Page: int32(page),
+			Page:  int32(page),
 			Count: int32(count),
 		}
-		if response,err := cc.ListPort(ctx,req);err ==nil{
-			ctx.JSON(http.StatusOK,gin.H{
-				"Port" : response,
+		if response, err := cc.ListPort(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"Port": response,
 			})
-		}else{
-			ctx.JSON(http.StatusInternalServerError,gin.H{
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
 		}

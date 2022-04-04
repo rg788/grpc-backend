@@ -39,14 +39,16 @@ func dbConnection() {
 	//fmt.Println(success)
 }
 
-func Createnewport(id int64, name, code, city, state, country string) {
+func Createnewport(id int64, name, code, city, state, country string) error{
 
 	_, newerr := conn.Exec(context.Background(), "insert into seaports(id,name,code,city,state,country) values ($1,$2,$3,$4,$5,$6)", id, name, code, city, state, country)
 	if newerr != nil {
 		fmt.Fprintf(os.Stderr, "insertion failed: %v\n", newerr)
-		os.Exit(1)
+		//os.Exit(1)
+		return newerr
 	}
 	fmt.Println("Create")
+	return newerr
 }
 
 func Getportdetails(id int64) (Id int64, name, code, city, state, country string) {
@@ -96,8 +98,7 @@ func UpdatePortDetails(id int64, name, code, city, state, country string) {
 		fmt.Fprintf(os.Stderr, "Updation failed: %v\n", newerr)
 		os.Exit(1)
 	}
-	//fmt.Println("Updated")
-	//fmt.Println(id, name)
+
 
 }
 
