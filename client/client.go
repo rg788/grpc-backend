@@ -4,6 +4,7 @@ import (
 	pb "grpc-backend/gen/proto"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -17,6 +18,7 @@ type PORTINPUT struct {
 	STATE   string `json:"state" binding:"required"`
 	COUNTRY string `json:"country" binding:"required"`
 }
+
 
 func main() {
 	conn, err := grpc.Dial("localhost:5051", grpc.WithInsecure())
@@ -139,6 +141,33 @@ func endPoints(cc pb.PortServiceClient) {
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+		}
+
+	})
+
+	g.GET("/v1/ports", func(ctx *gin.Context) {
+		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "0"))
+		count, _ := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
+		
+		var input PORTINPUT
+		if err := ctx.BindJSON(&input); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		req := &pb.ListPortRequest{
+			Page: int32(page),
+			Count: int32(count),
+		}
+		if response,err := cc.ListPort(ctx,req);err ==nil{
+			ctx.JSON(http.StatusOK,gin.H{
+				"Port" : response,
+			})
+		}else{
+			ctx.JSON(http.StatusInternalServerError,gin.H{
 				"error": err.Error(),
 			})
 		}

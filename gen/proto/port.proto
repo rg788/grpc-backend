@@ -50,11 +50,12 @@ message DeletePortResponse{
 }
 
 message ListPortRequest {
-
+int32 page =1;
+int32 count =2;
 }
 
 message ListPortResponse {
-    Port port = 1;
+    repeated Port port = 1;
 }
 
 service PortService{
