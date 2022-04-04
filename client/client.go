@@ -34,8 +34,8 @@ func main() {
 func endPoints(cc pb.PortServiceClient) {
 
 	g := gin.Default()
-	
-//Creating
+
+	//Creating
 
 	g.POST("/v1/ports", func(ctx *gin.Context) {
 
@@ -65,7 +65,7 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
-//Updating
+	//Updating
 	g.PUT("/v1/ports/:id", func(ctx *gin.Context) {
 
 		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -94,7 +94,7 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
-//Retreive
+	//Retreive
 	g.GET("/v1/ports/:id", func(ctx *gin.Context) {
 
 		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -124,7 +124,7 @@ func endPoints(cc pb.PortServiceClient) {
 
 	})
 
-// Deletion
+	// Deletion
 	g.DELETE("/v1/ports/:id", func(ctx *gin.Context) {
 
 		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
@@ -150,7 +150,7 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 	})
-//Pagination
+	//Pagination
 
 	g.GET("/v1/ports", func(ctx *gin.Context) {
 		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "0"))

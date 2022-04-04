@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/jackc/pgx/v4"
@@ -12,7 +11,7 @@ import (
 var conn pgx.Conn
 
 func dbConnection() {
-	connection, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/ports"))
+	connection, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/nikil"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
@@ -39,7 +38,7 @@ func dbConnection() {
 	//fmt.Println(success)
 }
 
-func Createnewport(id int64, name, code, city, state, country string) error{
+func Createnewport(id int64, name, code, city, state, country string) error {
 
 	_, newerr := conn.Exec(context.Background(), "insert into seaports(id,name,code,city,state,country) values ($1,$2,$3,$4,$5,$6)", id, name, code, city, state, country)
 	if newerr != nil {
@@ -51,14 +50,8 @@ func Createnewport(id int64, name, code, city, state, country string) error{
 	return newerr
 }
 
-func Getportdetails(id int64) (Id int64, name, code, city, state, country string) {
+func Getportdetails(id int64) (Id int64, name , code  , city , state , country string) {
 	fmt.Println("Fetch")
-	conn, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/ports"))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	defer conn.Close(context.Background())
 
 	AllRows, errorRet := conn.Query(context.Background(), "select * from seaports where id=$1", id)
 	if errorRet != nil {
@@ -80,7 +73,7 @@ func Getportdetails(id int64) (Id int64, name, code, city, state, country string
 			fmt.Fprintf(os.Stderr, "scanning failed:%v", error)
 		}
 	}
-	log.Println(name, code)
+
 	return ID, Name, Code, City, State, Country
 }
 
@@ -98,8 +91,6 @@ func UpdatePortDetails(id int64, name, code, city, state, country string) {
 		fmt.Fprintf(os.Stderr, "Updation failed: %v\n", newerr)
 		os.Exit(1)
 	}
-
-
 }
 
 func checkPortId(id int64) bool {
