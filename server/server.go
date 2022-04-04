@@ -80,7 +80,7 @@ func (*server) CreatePort(ctx context.Context, in *pb.CreatePortRequest) (*pb.Cr
 
 	Createnewport(id, name, code, city, state, country)
 	var res string
-	res = "Port " + id + " Successfully Created a port"
+	res = "Port " /* + id +  */+ " Successfully Created a port"
 	return &pb.CreatePortResponse{Result: res}, nil
 }
 
@@ -97,10 +97,17 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 
 	id := in.Port.GetId()
 	if checkPortId(id) {
-		Id, Name, Code, City, State, Country := Getportdetails(id)
+		//Id, Name, Code, City, State, Country := Getportdetails(id)
+		Id := in.Port.GetId()
+		Name := in.Port.GetName()
+		Code := in.Port.GetCode()
+		City := in.Port.GetCity()
+		State := in.Port.GetState()
+		Country := in.Port.GetCountry()
 		UpdatePortDetails(Id, Name, Code, City, State, Country)
+
 		var res string
-		res = "Port " + id + " Successfully updated"
+		res = "Port " + /* id +  */" Successfully updated"
 		return &pb.UpdatePortResponse{Result: res}, nil
 	} else {
 		//id := in.Port.GetId()
@@ -111,9 +118,10 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 		country := in.Port.GetCountry()
 		Createnewport(id, name, code, city, state, country)
 		var res string
-		res = "Port " + id + " Successfully new port created "
+		res = "Port " + /* id + */ " Successfully new port created "
 		return &pb.UpdatePortResponse{Result: res}, nil
 	}
+
 }
 
 func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.DeletePortResponse, error) {
@@ -121,14 +129,14 @@ func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.D
 	DeletePortDetails(id)
 
 	var res string
-	res = "Port " + id + " Successfully Deleted"
+	res = "Port " + /* id + */ " Successfully Deleted"
 	return &pb.DeletePortResponse{Result: res}, nil
 }
 
 //Id:Id,Name: name,Code: code,City: city,State: state,Country: country
 func main() {
 
-	//dbConnection()
+	dbConnection()
 	log.Println("Server Started")
 	lis, err := net.Listen("tcp", "0.0.0.0:5051")
 	if err != nil {

@@ -4,13 +4,14 @@ import (
 	pb "grpc-backend/gen/proto"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
 
 type PORTINPUT struct {
-	ID      string `json:"id" binding:"required"`
+	ID      int64  `json:"id" binding:"required"`
 	NAME    string `json:"name" binding:"required"`
 	CODE    string `json:"code" binding:"required"`
 	CITY    string `json:"city" binding:"required"`
@@ -64,7 +65,7 @@ func endPoints(cc pb.PortServiceClient) {
 
 	g.PUT("/v1/ports/:id", func(ctx *gin.Context) {
 
-		id := ctx.Param("id")
+		id,_ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -93,7 +94,7 @@ func endPoints(cc pb.PortServiceClient) {
 
 	g.GET("/v1/ports/:id", func(ctx *gin.Context) {
 
-		id := ctx.Param("id")
+		id,_ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -121,7 +122,7 @@ func endPoints(cc pb.PortServiceClient) {
 	})
 	g.DELETE("/v1/ports/:id", func(ctx *gin.Context) {
 
-		id := ctx.Param("id")
+		id,_ := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
