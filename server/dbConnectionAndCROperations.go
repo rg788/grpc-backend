@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+
 	"github.com/jackc/pgx/v4"
 	uuid "github.com/satori/go.uuid"
 )
@@ -94,7 +95,23 @@ func Createnewport(id, name, code, city, state, country string) {
 	fmt.Println("Create")
 }
 
-func Getportdetails(id string)(Id, name, code, city, state, country string){
+func Getportdetails(id string) (Id, name, code, city, state, country string) {
 	fmt.Println("Fetch")
-	return "1","2","3","4","5","6"
+	return "1", "2", "3", "4", "5", "6"
+}
+
+func UpdatePortDetails(id, name, code, city, state, country string) {
+	fmt.Println("Update")
+
+}
+
+func checkPortId(id string) bool {
+	if id == "" {
+		return false
+	}
+	return true
+}
+
+func DeletePortDetails(id string) {
+	fmt.Println("Delete")
 }

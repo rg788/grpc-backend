@@ -90,6 +90,32 @@ func (*server) RetreivePort(ctx context.Context, in *pb.RetrievePortRequest) (*p
 	return &pb.RetrievePortResponse{Id: Id, Name: name, Code: code, City: city, State: state, Country: country}, nil
 }
 
+func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.UpdatePortResponse, error) {
+
+	id := in.Port.GetId()
+	if checkPortId(id) {
+		Id, Name, Code, City, State, Country := Getportdetails(id)
+		UpdatePortDetails(Id, Name, Code, City, State, Country)
+		return &pb.UpdatePortResponse{Result: "Successfully updated"}, nil
+	} else {
+		//id := in.Port.GetId()
+		name := in.Port.GetName()
+		code := in.Port.GetCode()
+		city := in.Port.GetCity()
+		state := in.Port.GetState()
+		country := in.Port.GetCountry()
+		Createnewport(id, name, code, city, state, country)
+		return &pb.UpdatePortResponse{Result: "Successfully new port created"}, nil
+	}
+}
+
+func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.DeletePortResponse, error) {
+	id := in.GetPortId()
+	DeletePortDetails(id)
+
+	return &pb.DeletePortResponse{Result: "Successfully Deleted"}, nil
+}
+
 //Id:Id,Name: name,Code: code,City: city,State: state,Country: country
 func main() {
 

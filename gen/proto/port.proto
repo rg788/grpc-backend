@@ -22,7 +22,7 @@ message CreatePortResponse{
 }
 
 message UpdatePortRequest{
-    string port_id =1;
+    Port port =1 ;
 }
 
 message UpdatePortResponse{

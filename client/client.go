@@ -72,7 +72,12 @@ func endPoints(cc pb.PortServiceClient) {
 			})
 			return
 		}
-		req := &pb.UpdatePortRequest{PortId: id}
+		req := &pb.UpdatePortRequest{
+			Port: &pb.Port{
+				Id: id, Name: input.NAME, Code: input.CODE,
+				City: input.CITY, State: input.STATE, Country: input.COUNTRY,
+			},
+		}
 
 		if response, err := cc.UpdatePort(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
