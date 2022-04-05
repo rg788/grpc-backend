@@ -26,7 +26,7 @@ type PortServiceClient interface {
 	RetreivePort(ctx context.Context, in *RetrievePortRequest, opts ...grpc.CallOption) (*RetrievePortResponse, error)
 	UpdatePort(ctx context.Context, in *UpdatePortRequest, opts ...grpc.CallOption) (*UpdatePortResponse, error)
 	DeletePort(ctx context.Context, in *DeletePortResquest, opts ...grpc.CallOption) (*DeletePortResponse, error)
-	ListPort(ctx context.Context, in *ListPortRequest, opts ...grpc.CallOption) (*ListPortResponse, error)
+	ListPort(ctx context.Context, in *ListPortRequest, opts ...grpc.CallOption) (PortService_ListPortClient, error)
 }
 
 type portServiceClient struct {
@@ -73,13 +73,36 @@ func (c *portServiceClient) DeletePort(ctx context.Context, in *DeletePortResque
 	return out, nil
 }
 
-func (c *portServiceClient) ListPort(ctx context.Context, in *ListPortRequest, opts ...grpc.CallOption) (*ListPortResponse, error) {
-	out := new(ListPortResponse)
-	err := c.cc.Invoke(ctx, "/main.PortService/ListPort", in, out, opts...)
+func (c *portServiceClient) ListPort(ctx context.Context, in *ListPortRequest, opts ...grpc.CallOption) (PortService_ListPortClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PortService_ServiceDesc.Streams[0], "/main.PortService/ListPort", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &portServiceListPortClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PortService_ListPortClient interface {
+	Recv() (*ListPortResponse, error)
+	grpc.ClientStream
+}
+
+type portServiceListPortClient struct {
+	grpc.ClientStream
+}
+
+func (x *portServiceListPortClient) Recv() (*ListPortResponse, error) {
+	m := new(ListPortResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // PortServiceServer is the server API for PortService service.
@@ -90,7 +113,7 @@ type PortServiceServer interface {
 	RetreivePort(context.Context, *RetrievePortRequest) (*RetrievePortResponse, error)
 	UpdatePort(context.Context, *UpdatePortRequest) (*UpdatePortResponse, error)
 	DeletePort(context.Context, *DeletePortResquest) (*DeletePortResponse, error)
-	ListPort(context.Context, *ListPortRequest) (*ListPortResponse, error)
+	ListPort(*ListPortRequest, PortService_ListPortServer) error
 	mustEmbedUnimplementedPortServiceServer()
 }
 
@@ -110,8 +133,8 @@ func (UnimplementedPortServiceServer) UpdatePort(context.Context, *UpdatePortReq
 func (UnimplementedPortServiceServer) DeletePort(context.Context, *DeletePortResquest) (*DeletePortResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePort not implemented")
 }
-func (UnimplementedPortServiceServer) ListPort(context.Context, *ListPortRequest) (*ListPortResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListPort not implemented")
+func (UnimplementedPortServiceServer) ListPort(*ListPortRequest, PortService_ListPortServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListPort not implemented")
 }
 func (UnimplementedPortServiceServer) mustEmbedUnimplementedPortServiceServer() {}
 
@@ -198,22 +221,25 @@ func _PortService_DeletePort_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PortService_ListPort_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPortRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _PortService_ListPort_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListPortRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(PortServiceServer).ListPort(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/main.PortService/ListPort",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PortServiceServer).ListPort(ctx, req.(*ListPortRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(PortServiceServer).ListPort(m, &portServiceListPortServer{stream})
+}
+
+type PortService_ListPortServer interface {
+	Send(*ListPortResponse) error
+	grpc.ServerStream
+}
+
+type portServiceListPortServer struct {
+	grpc.ServerStream
+}
+
+func (x *portServiceListPortServer) Send(m *ListPortResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // PortService_ServiceDesc is the grpc.ServiceDesc for PortService service.
@@ -239,11 +265,13 @@ var PortService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeletePort",
 			Handler:    _PortService_DeletePort_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "ListPort",
-			Handler:    _PortService_ListPort_Handler,
+			StreamName:    "ListPort",
+			Handler:       _PortService_ListPort_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "port.proto",
 }

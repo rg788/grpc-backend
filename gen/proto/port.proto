@@ -55,7 +55,13 @@ int32 count =2;
 }
 
 message ListPortResponse {
-    repeated Port port = 1;
+   repeated int64 id =1;
+   repeated string name =2;
+   repeated string code =3;
+   repeated string city =4;
+   repeated string state=5;
+   repeated string country =6;
+  
 }
 
 service PortService{
@@ -63,5 +69,5 @@ service PortService{
     rpc RetreivePort (RetrievePortRequest) returns (RetrievePortResponse);
     rpc UpdatePort (UpdatePortRequest) returns (UpdatePortResponse);
     rpc DeletePort (DeletePortResquest) returns (DeletePortResponse);
-    rpc ListPort (ListPortRequest) returns (ListPortResponse);
+    rpc ListPort (ListPortRequest) returns ( stream ListPortResponse);
 }

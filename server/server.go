@@ -71,7 +71,7 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 		country := in.Port.GetCountry()
 		Createnewport(id, name, code, city, state, country)
 		var res string
-		res = "Port " + strconv.Itoa(int(id)) + " Successfully created "
+		res = "Port " + strconv.Itoa(int(id)) + " Not found, New Port Successfully created "
 		return &pb.UpdatePortResponse{Result: res}, nil
 	}
 
@@ -86,6 +86,18 @@ func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.D
 	res = "Port " + strconv.Itoa(int(id)) + " Successfully Deleted"
 	return &pb.DeletePortResponse{Result: res}, err
 }
+
+//Pagination
+/* func (*server) ListPort(ctx context.Context, req *pb.ListPortRequest) (stream pb.PortService_ListPortClient, error){
+
+	var page = req.Page
+	var count = req.Count
+
+	ports := getAllPorts(page, count)
+	fmt.Println(ports)
+	return &pb.ListPortResponse{}, nil
+
+} */
 
 func main() {
 

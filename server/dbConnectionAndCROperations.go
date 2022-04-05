@@ -138,3 +138,37 @@ func DeletePortDetails(id int64) error {
 	return nil
 
 }
+
+type portAttributes struct {
+	ID      int64
+	Name    string
+	Code    string
+	City    string
+	State   string
+	Country string
+}
+
+func getAllPorts(page, limit int32) []portAttributes {
+	pageNumber := (page - 1) * limit
+	query :=
+		`Select * from seaports
+         offset $1
+         fetch first $2 row only `
+	Ports, err := conn.Query(context.Background(), query, pageNumber, limit)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Retrieving all the ports details from the database failed : %v", err)
+	}
+	defer Ports.Close()
+	var port portAttributes
+	portsInRanges := []portAttributes{}
+	for Ports.Next() {
+		error := Ports.Scan(&port.ID, &port.Name, &port.Code, &port.City, &port.State, &port.Country)
+		if error != nil {
+			fmt.Fprintf(os.Stderr, "Scanning failed when trying to retrive all the ports from the database:%v", error)
+		}
+		portsInRanges = append(portsInRanges, port)
+	}
+
+
+	return portsInRanges
+}
