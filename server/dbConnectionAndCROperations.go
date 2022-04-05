@@ -50,7 +50,7 @@ func Createnewport(id int64, name, code, city, state, country string) error {
 	return newerr
 }
 
-func Getportdetails(id int64) (Id int64, name , code  , city , state , country string) {
+func Getportdetails(id int64) (Id int64, name, code, city, state, country string) {
 	fmt.Println("Fetch")
 
 	AllRows, errorRet := conn.Query(context.Background(), "select * from seaports where id=$1", id)
@@ -94,22 +94,47 @@ func UpdatePortDetails(id int64, name, code, city, state, country string) {
 }
 
 func checkPortId(id int64) bool {
-	if id == 0 {
+
+	conn, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/ports"))
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+
+	defer conn.Close(context.Background())
+	data, newerr := conn.Query(context.Background(), "select id from seaports where id=$1", id)
+	if newerr != nil {
+		fmt.Fprintf(os.Stderr, "Updation failed: %v\n", newerr)
+		os.Exit(1)
+	}
+	var ID int64
+	for data.Next() {
+		error := data.Scan(&ID)
+		if error != nil {
+			fmt.Fprintf(os.Stderr, "scanning failed:%v", error)
+		}
+	}
+	if ID == 0 {
 		return false
 	}
 	return true
 }
 
-func DeletePortDetails(id int64) {
+func DeletePortDetails(id int64) error {
 	fmt.Println("Delete")
 	conn, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/ports"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 	}
+
 	_, newerr := conn.Exec(context.Background(), "Delete from seaports where id=$1", id)
 	if newerr != nil {
 		fmt.Fprintf(os.Stderr, "Deletion failed: %v\n", newerr)
 		os.Exit(1)
+		return newerr
 	}
+
+	return nil
 
 }

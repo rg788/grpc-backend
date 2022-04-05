@@ -43,10 +43,10 @@ func (*server) RetreivePort(ctx context.Context, in *pb.RetrievePortRequest) (*p
 	id := in.GetPortId()
 	Id, name, code, city, state, country := Getportdetails(id)
 
-
 	return &pb.RetrievePortResponse{Id: Id, Name: name, Code: code, City: city, State: state, Country: country}, nil
 }
 
+// Updating port
 func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.UpdatePortResponse, error) {
 
 	id := in.Port.GetId()
@@ -77,13 +77,14 @@ func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.Up
 
 }
 
+//Delete port
 func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.DeletePortResponse, error) {
 	id := in.GetPortId()
-	DeletePortDetails(id)
+	err := DeletePortDetails(id)
 
 	var res string
 	res = "Port " + strconv.Itoa(int(id)) + " Successfully Deleted"
-	return &pb.DeletePortResponse{Result: res}, nil
+	return &pb.DeletePortResponse{Result: res}, err
 }
 
 func main() {
