@@ -2,6 +2,7 @@ package main
 
 import (
 	pb "grpc-backend/gen/proto"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -153,7 +154,7 @@ func endPoints(cc pb.PortServiceClient) {
 	//Pagination
 
 	g.GET("/v1/ports", func(ctx *gin.Context) {
-		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "0"))
+		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 		count, _ := strconv.Atoi(ctx.DefaultQuery("count", "10"))
 
 		var input PORTINPUT
@@ -167,25 +168,28 @@ func endPoints(cc pb.PortServiceClient) {
 			Page:  int32(page),
 			Count: int32(count),
 		}
-		if _, err := cc.ListPort(ctx, req); err == nil {
-			/* ctx.JSON(http.StatusOK, gin.H{
-				"id":      response.Id,
-				"name":    response.Name,
-				"code":    response.Code,
-				"city":    response.City,
-				"state":   response.State,
-				"country": response.Country,
-			}) */
+
+		if response, err := cc.ListPort(ctx, req); err == nil {
+
+			for {
+				msg, err := response.Recv()
+
+				if err == io.EOF {
+					//reached end of the stream
+					break
+				}
+				if err != nil {
+					log.Fatalf("Big errror! :(%v", err)
+				}
+				ctx.JSON(http.StatusOK, gin.H{
+					"Port": msg.GetPort(),
+				})
+			}
+
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
-
-
-			//receving streams
-			// rstream,_ := cc.ListPort(ctx, req)
-			// rstream.Recv()
-
 
 
 		}

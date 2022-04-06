@@ -169,6 +169,5 @@ func getAllPorts(page, limit int32) []portAttributes {
 		portsInRanges = append(portsInRanges, port)
 	}
 
-
 	return portsInRanges
 }

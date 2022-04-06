@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	pb "grpc-backend/gen/proto"
 	"log"
 	"net"
@@ -88,16 +89,25 @@ func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.D
 }
 
 //Pagination
-/* func (*server) ListPort(ctx context.Context, req *pb.ListPortRequest) (stream pb.PortService_ListPortClient, error){
 
-	var page = req.Page
-	var count = req.Count
 
-	ports := getAllPorts(page, count)
-	fmt.Println(ports)
-	return &pb.ListPortResponse{}, nil
+func (* server)ListPort(in *pb.ListPortRequest,stream pb.PortService_ListPortServer)error{
 
-} */
+	count := in.Count
+	page := in.Page
+
+	allPorts := getAllPorts(page, count)
+	var i int32
+	for i = 0; i < count; i++ {
+		var port1 = allPorts[i]
+		fmt.Println(port1)
+		res:= &pb.ListPortResponse{Port:&pb.Port{Id: port1.ID, Name: port1.Name, Code: port1.Code, City: port1.City, State: port1.State, Country: port1.Country}}
+		stream.Send(res)
+	}
+
+	return nil
+
+}
 
 func main() {
 
