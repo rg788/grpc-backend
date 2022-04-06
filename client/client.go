@@ -56,9 +56,7 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 		if response, err := cc.CreatePort(ctx, req); err == nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"Create": response,
-			})
+			ctx.JSON(http.StatusOK, response)
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
@@ -85,9 +83,7 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 		if response, err := cc.UpdatePort(ctx, req); err == nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"Result": response,
-			})
+			ctx.JSON(http.StatusOK, response)
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
@@ -141,9 +137,7 @@ func endPoints(cc pb.PortServiceClient) {
 		}
 
 		if response, err := cc.DeletePort(ctx, req); err == nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"Result": response,
-			})
+			ctx.JSON(http.StatusOK, response)
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
@@ -179,18 +173,15 @@ func endPoints(cc pb.PortServiceClient) {
 					break
 				}
 				if err != nil {
-					log.Fatalf("Big errror! :(%v", err)
+					log.Fatalf("Big errror! while fetching ;( %v", err)
 				}
-				ctx.JSON(http.StatusOK, gin.H{
-					"Port": msg.GetPort(),
-				})
+				ctx.JSON(http.StatusOK, msg.GetPort())
 			}
 
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
-
 
 		}
 
