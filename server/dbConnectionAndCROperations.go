@@ -93,7 +93,7 @@ func UpdatePortDetails(id int64, name, code, city, state, country string) {
 	}
 }
 
-func checkPortId(id int64) bool {
+func CheckPortId(id int64) bool {
 
 	conn, err := pgx.Connect(context.Background(), os.Getenv("postgresql://localhost:5432/ports"))
 
@@ -148,7 +148,7 @@ type portAttributes struct {
 	Country string
 }
 
-func getAllPorts(page, limit int32) []portAttributes {
+func GetAllPorts(page, limit int32) []portAttributes {
 	pageNumber := (page - 1) * limit
 	query :=
 		`Select * from seaports

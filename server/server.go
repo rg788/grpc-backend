@@ -50,7 +50,7 @@ func (*server) RetreivePort(ctx context.Context, in *pb.RetrievePortRequest) (*p
 func (*server) UpdatePort(ctx context.Context, in *pb.UpdatePortRequest) (*pb.UpdatePortResponse, error) {
 
 	id := in.Port.GetId()
-	if checkPortId(id) {
+	if CheckPortId(id) {
 		Id := in.Port.GetId()
 		Name := in.Port.GetName()
 		Code := in.Port.GetCode()
@@ -88,17 +88,17 @@ func (*server) DeletePort(ctx context.Context, in *pb.DeletePortResquest) (*pb.D
 }
 
 //Pagination
-func (* server)ListPort(in *pb.ListPortRequest,stream pb.PortService_ListPortServer)error{
+func (*server) ListPort(in *pb.ListPortRequest, stream pb.PortService_ListPortServer) error {
 
 	count := in.Count
 	page := in.Page
 
-	allPorts := getAllPorts(page, count)
+	allPorts := GetAllPorts(page, count)
 	var i int32
 	for i = 0; i < count; i++ {
 		var port1 = allPorts[i]
 		//fmt.Println(port1)
-		res:= &pb.ListPortResponse{Port:&pb.Port{Id: port1.ID, Name: port1.Name, Code: port1.Code, City: port1.City, State: port1.State, Country: port1.Country}}
+		res := &pb.ListPortResponse{Port: &pb.Port{Id: port1.ID, Name: port1.Name, Code: port1.Code, City: port1.City, State: port1.State, Country: port1.Country}}
 		stream.Send(res)
 	}
 

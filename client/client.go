@@ -95,13 +95,13 @@ func endPoints(cc pb.PortServiceClient) {
 	g.GET("/v1/ports/:id", func(ctx *gin.Context) {
 
 		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
-		var input PORTINPUT
+		/* var input PORTINPUT
 		if err := ctx.BindJSON(&input); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
-		}
+		} */
 		req := &pb.RetrievePortRequest{PortId: id}
 
 		if response, err := cc.RetreivePort(ctx, req); err == nil {
@@ -147,6 +147,14 @@ func endPoints(cc pb.PortServiceClient) {
 	})
 	//Pagination
 
+	type portAttributes struct {
+		ID      int64
+		Name    string
+		Code    string
+		City    string
+		State   string
+		Country string
+	}
 	g.GET("/v1/ports", func(ctx *gin.Context) {
 		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 		count, _ := strconv.Atoi(ctx.DefaultQuery("count", "10"))
@@ -155,7 +163,8 @@ func endPoints(cc pb.PortServiceClient) {
 			Page:  int32(page),
 			Count: int32(count),
 		}
-
+		var portAttr portAttributes
+		var allport = []portAttributes{}
 		if response, err := cc.ListPort(ctx, req); err == nil {
 
 			for {
@@ -168,8 +177,16 @@ func endPoints(cc pb.PortServiceClient) {
 				if err != nil {
 					log.Fatalf("Big errror! while fetching ;( %v", err)
 				}
-				ctx.JSON(http.StatusOK, msg.GetPort())
+				//ctx.JSON(http.StatusOK, msg.GetPort())
+				portAttr.ID = msg.GetPort().Id
+				portAttr.Name = msg.GetPort().Name
+				portAttr.Code = msg.GetPort().Code
+				portAttr.City = msg.GetPort().City
+				portAttr.State = msg.GetPort().State
+				portAttr.Country = msg.GetPort().Country
+				allport = append(allport, portAttr)
 			}
+			ctx.JSON(http.StatusOK, allport)
 
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
