@@ -151,13 +151,6 @@ func endPoints(cc pb.PortServiceClient) {
 		page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 		count, _ := strconv.Atoi(ctx.DefaultQuery("count", "10"))
 
-		var input PORTINPUT
-		if err := ctx.BindJSON(&input); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
 		req := &pb.ListPortRequest{
 			Page:  int32(page),
 			Count: int32(count),
