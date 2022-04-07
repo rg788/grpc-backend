@@ -118,13 +118,6 @@ func endPoints(cc pb.PortServiceClient) {
 	g.DELETE("/v1/ports/:id", func(ctx *gin.Context) {
 
 		id, _ := strconv.ParseInt(ctx.Param("id"), 10, 64)
-		var input PORTINPUT
-		if err := ctx.BindJSON(&input); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
 		req := &pb.DeletePortResquest{
 			PortId: id,
 		}
