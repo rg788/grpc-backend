@@ -99,14 +99,7 @@ func endPoints(cc pb.PortServiceClient) {
 		req := &pb.RetrievePortRequest{PortId: id}
 
 		if response, err := cc.RetreivePort(ctx, req); err == nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"id":      response.Id,
-				"name":    response.Name,
-				"code":    response.Code,
-				"city":    response.City,
-				"state":   response.State,
-				"country": response.Country,
-			})
+			ctx.JSON(http.StatusOK, response)
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
